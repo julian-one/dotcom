@@ -1,0 +1,6 @@
+{
+    "watch": ["src/", "public/"],
+    "ext": "ts,tsx,html,css,js",
+    "ignore": ["src/**/*.spec.ts", "src/**/*.test.ts"],
+    "exec": "npm run build && node dist/index.js"
+}

@@ -1,15 +1,19 @@
 {
     "compilerOptions": {
-        "target": "ES6",
-        "module": "commonjs",
-        "strict": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true,
-        "outDir": "./dist"
+        "target": "ES2022",
+        "resolveJsonModule": true,
+        "strict": true,
+        "noUncheckedIndexedAccess": true,
+        "moduleResolution": "NodeNext",
+        "module": "NodeNext",
+        "outDir": "dist",
+        "sourceMap": true,
+        "lib": ["ES2023", "DOM", "DOM.Iterable"]
     },
     "include": [
-        "src/**/*.ts"
+        "src/**/*", "public",
     ],
     "exclude": [
         "node_modules"
