@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,39 +8,40 @@
     <link rel="stylesheet" href="styles.css">
     <style>
         form {
-    display: flex;
-    flex-direction: column;
-    width: 300px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border: 5px solid orange;
-    border-radius: 10px;
-    padding: 1em;
-}
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 5px solid orange;
+            border-radius: 10px;
+            padding: 1em;
+        }
 
-input {
-    font-size: 1em;
-    padding: 0.5em;
-    margin: 0.5em 0;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-}
+        input {
+            font-size: 1em;
+            padding: 0.5em;
+            margin: 0.5em 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
 
-button {
-    font-size: 1em;
-    padding: 0.5em;
-    margin: 0.5em 0;
-    border-radius: 5px;
-    background-color: orange;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
+        button {
+            font-size: 1em;
+            padding: 0.5em;
+            margin: 0.5em 0;
+            border-radius: 5px;
+            background-color: orange;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
 
-button:hover {
-    opacity: 0.9;
-}
+        button:hover {
+            opacity: 0.9;
+        }
     </style>
 </head>
+
 <body>
     <h1>Register</h1>
     <form id="register-form">
@@ -49,7 +51,7 @@ button:hover {
         <button type="submit">Register</button>
     </form>
     <script>
-        document.getElementById('register-form').onsubmit = async function(event) {
+        document.getElementById('register-form').onsubmit = async function (event) {
             event.preventDefault();
             const username = document.getElementById('username').value;
             const email = document.getElementById('email').value;
@@ -79,4 +81,5 @@ button:hover {
         };
     </script>
 </body>
+
 </html>
