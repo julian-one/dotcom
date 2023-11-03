@@ -8,11 +8,13 @@ import session from 'express-session';
 const app = express();
 
 app.use(express.json());
-app.use(session({
-  secret: 'some_sups_secret',
-  resave: false,
-  saveUninitialized: true,
-}));
+app.use(
+  session({
+    secret: 'some_sups_secret',
+    resave: false,
+    saveUninitialized: true,
+  }),
+);
 
 const database = Database.getInstance();
 
@@ -50,7 +52,7 @@ app.get('/protected', (req: Request, res: Response) => {
 app.get('/logout', (req: Request, res: Response) => {
   console.log('logout session:', req.session);
 
-  req.session.destroy(err => {
+  req.session.destroy((err) => {
     if (err) {
       console.error('Error during session destruction:', err);
       return res.status(500).send('Error logging out');

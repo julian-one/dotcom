@@ -22,7 +22,7 @@ class Database {
     return Database.instance;
   }
 
-  public async query(text: string, params?: any[]): Promise<any> {
+  public async query(text: string, params?: string[]): Promise<any> {
     const client = await this.pool.connect();
     try {
       const result = await client.query(text, params);
@@ -35,18 +35,21 @@ class Database {
   public async userExists(username: string, email: string): Promise<boolean> {
     const result = await this.query(
       'SELECT * FROM users WHERE username = $1 OR email = $2 LIMIT 1',
-      [username, email]
+      [username, email],
     );
     return result.rows.length > 0;
   }
 
-  public async createUser(username: string, email: string, hashedPassword: string): Promise<void> {
+  public async createUser(
+    username: string,
+    email: string,
+    hashedPassword: string,
+  ): Promise<void> {
     await this.query(
       'INSERT INTO users (username, email, password, created_on) VALUES ($1, $2, $3, NOW())',
-      [username, email, hashedPassword]
+      [username, email, hashedPassword],
     );
   }
 }
-
 
 export default Database;
