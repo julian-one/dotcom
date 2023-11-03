@@ -22,9 +22,30 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             font-size: 6em;
         }
+
+        .logout-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: orange;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <h1>hello 🌍</h1>
+
+    <button class="logout-button" onclick="logout()">Logout</button>
+
+    <script>
+        function logout() {
+            // Redirect to the logout endpoint
+            window.location.href = '/logout';
+        }
+    </script>
 </body>
 </html>
