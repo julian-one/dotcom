@@ -12,7 +12,7 @@ app.use(
     secret: env.SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false },
+    cookie: { secure: false, httpOnly: true, },
   }),
 );
 

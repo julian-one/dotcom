@@ -8,7 +8,7 @@ router.post('/login', login);
 router.post('/register', register);
 router.get('/logout', logout);
 
-router.get('/protected', authorizer, (req, res) => {
+router.get('/admin', authorizer, (req, res) => {
   res.send('Protected content');
 });
 

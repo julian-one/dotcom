@@ -7,7 +7,7 @@ const database = Database.getInstance();
 
 export const authorizer = (req: Request, res: Response, next: NextFunction) => {
   if (!req.session.userId) {
-    console.log(`no user id for session: ${req.session}`);
+    console.log(`unauthorized session: ${req.session}`);
     return res.status(401).send('You are not authenticated');
   }
   next();
