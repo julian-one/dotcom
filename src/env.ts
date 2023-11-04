@@ -25,7 +25,6 @@ function getEnvNumber(key: string): number {
 const env = {
   PORT: getEnvNumber('PORT'),
   SECRET: getEnvString('SECRET'),
-  ALLOWED_EMAILS: getEnvString('ALLOWED_EMAILS'),
   DB_USER: getEnvString('DB_USER'),
   DB_HOST: getEnvString('DB_HOST'),
   DB_NAME: getEnvString('DB_NAME'),
