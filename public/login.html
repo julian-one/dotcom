@@ -4,45 +4,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
+    <title>Login</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <h1>Register</h1>
-    <form id="register-form">
+    <h1>Login</h1>
+    <br>
+    <form id="login-form">
         <input type="text" id="username" placeholder="Username" required>
-        <input type="email" id="email" placeholder="Email" required>
         <input type="password" id="password" placeholder="Password" required>
-        <button type="submit">Register</button>
+        <button type="submit">Login</button>
     </form>
     <script>
-        document.getElementById('register-form').onsubmit = async function (event) {
+        document.getElementById('login-form').onsubmit = async function (event) {
             event.preventDefault();
             const username = document.getElementById('username').value;
-            const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
             // client-side validation 
             // to-do: additional validation on server side
-            if (!username || !email || !password) {
+            if (!username || !password) {
                 alert('Please fill in all fields');
                 return;
             }
 
-            const response = await fetch('/register', {
+            const response = await fetch('/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username, email, password }),
+                body: JSON.stringify({ username, password }),
             });
 
             if (response.ok) {
-                alert('Registered successfully!');
-                window.location.href = '/';
+                alert('Logged in successfully!');
+                window.location.href = '/protected';
             } else {
-                alert('Failed to register. ' + (await response.text()));
+                alert('Failed to login. ' + (await response.text()));
             }
         };
     </script>

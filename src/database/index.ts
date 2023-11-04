@@ -1,6 +1,6 @@
 import { Pool } from 'pg';
-import env from '../env';
 import { UserRecord, isUserRecord } from './types';
+import env from '../env';
 
 class Database {
   private static instance: Database;
@@ -64,7 +64,6 @@ class Database {
       'INSERT INTO users (username, email, password, created_on) VALUES ($1, $2, $3, NOW()) RETURNING *',
       [username, email, hashedPassword],
     );
-    console.log('aaa:', result.rows[0]);
     if (result.rows.length === 0) {
       throw new Error('User creation failed');
     }
