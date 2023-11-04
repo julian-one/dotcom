@@ -1,7 +1,6 @@
 import { Pool } from 'pg';
 import env from '../env';
 import { UserRecord, isUserRecord } from './types';
-import { User, toUser } from '../authentication/types';
 
 class Database {
   private static instance: Database;
@@ -43,7 +42,7 @@ class Database {
       throw new Error('User not found');
     }
     if (!isUserRecord(result.rows[0])) {
-      throw new Error('Record is not of the correct type UserRecord')
+      throw new Error('Record is not of the correct type UserRecord');
     }
     return result.rows[0];
   }
@@ -69,7 +68,7 @@ class Database {
       throw new Error('User creation failed');
     }
     if (!isUserRecord(result.rows[0])) {
-      throw new Error('Record is not of the correct type UserRecord')
+      throw new Error('Record is not of the correct type UserRecord');
     }
     return result.rows[0];
   }
