@@ -1,18 +1,35 @@
 import dotenv from 'dotenv';
+
 dotenv.config();
 
-const PORT_STR = process.env.PORT;
-const HOST = process.env.HOST;
+function getEnvString(key: string): string {
+  const value = process.env[key];
+  if (value === undefined) {
+    throw new Error(`${key} environment variable not set`);
+  }
+  return value;
+}
 
-if (!PORT_STR) throw new Error('PORT environment variable not set');
-const PORT = parseInt(PORT_STR, 10);
-if (isNaN(PORT)) throw new Error('PORT environment variable must be a number');
-
-if (!HOST) throw new Error('HOST environment variable not set');
+function getEnvNumber(key: string): number {
+  const value = process.env[key];
+  if (value === undefined) {
+    throw new Error(`${key} environment variable not set`);
+  }
+  const parsed = parseInt(value, 10);
+  if (isNaN(parsed)) {
+    throw new Error(`${key} environment variable must be a number`);
+  }
+  return parsed;
+}
 
 const env = {
-  PORT,
-  HOST,
+  PORT: getEnvNumber('PORT'),
+  SECRET: getEnvString('SECRET'),
+  DB_USER: getEnvString('DB_USER'),
+  DB_HOST: getEnvString('DB_HOST'),
+  DB_NAME: getEnvString('DB_NAME'),
+  DB_PASSWORD: getEnvString('DB_PASSWORD'),
+  DB_PORT: getEnvNumber('DB_PORT'),
 };
 
 export default env;

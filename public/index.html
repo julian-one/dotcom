@@ -4,27 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>julian one</title>
-    <style>
-        html, body {
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: Geneva, Arial;
-            color: black;
-        }
-
-        h1 {
-            border: 5px solid orange;
-            padding: 100px;
-            text-align: center;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            font-size: 6em;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>hello 🌍</h1>
+    <h1 id="greeting">hello 🌍</h1>
+    <form>
+        <button type="button" id="login-btn" class="button login-button" onclick="login()">Login</button>
+        <button type="button" id="logout-btn" class="button logout-button" onclick="logout()">Logout</button>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/login-status')
+                .then(response => response.json())
+                .then(data => {
+                    const greetingElement = document.getElementById('greeting');
+                    if (data.isLoggedIn) {
+                        greetingElement.textContent = `hello ${data.username}`;
+                        document.getElementById('login-btn').style.display = 'none';
+                        document.getElementById('logout-btn').style.display = 'block';
+                    } else {
+                        greetingElement.textContent = 'hello 🌍';
+                        document.getElementById('login-btn').style.display = 'block';
+                        document.getElementById('logout-btn').style.display = 'none';
+                    }
+                });
+        });
+
+        function login() {
+            window.location.href = '/login';
+        }
+
+        function logout() {
+            fetch('/logout', { method: 'GET' })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = '/';
+                    } else {
+                        console.error('Logout failed');
+                    }
+                });
+        }
+    </script>
 </body>
 </html>
