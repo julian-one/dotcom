@@ -5,8 +5,8 @@ type User = {
   username: string;
   email: string;
   password: string;
-  createdOn: string;
-  lastLogin?: string;
+  createdOn: Date;
+  lastLogin: Date | null;
 };
 
 const toUser = (record: UserRecord): User => {

@@ -3,8 +3,8 @@ type UserRecord = {
   username: string;
   email: string;
   password: string;
-  created_on: string;
-  last_login?: string;
+  created_on: Date; 
+  last_login: Date | null;
 };
 
 function isUserRecord(record: any): record is UserRecord {
@@ -12,9 +12,17 @@ function isUserRecord(record: any): record is UserRecord {
   const hasUsername = typeof record.username === 'string';
   const hasEmail = typeof record.email === 'string';
   const hasPassword = typeof record.password === 'string';
-  const hasCreatedOn = typeof record.created_on === 'string';
-  const hasLastLogin =
-    record.last_login === undefined || typeof record.last_login === 'string';
+  const hasCreatedOn = record.created_on instanceof Date;
+  const hasLastLogin = record.last_login === null || record.last_login instanceof Date;
+
+  console.log(typeof record.created_on);
+  console.log(
+"1", hasUserId,
+"2", hasUsername,
+"3", hasEmail,
+"4", hasPassword,
+"5", hasCreatedOn,
+"6", hasLastLogin)
   return (
     hasUserId &&
     hasUsername &&
