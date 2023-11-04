@@ -3,7 +3,7 @@ type UserRecord = {
   username: string;
   email: string;
   password: string;
-  created_on: Date; 
+  created_on: Date;
   last_login: Date | null;
 };
 
@@ -13,7 +13,8 @@ function isUserRecord(record: any): record is UserRecord {
   const hasEmail = typeof record.email === 'string';
   const hasPassword = typeof record.password === 'string';
   const hasCreatedOn = record.created_on instanceof Date;
-  const hasLastLogin = record.last_login === null || record.last_login instanceof Date;
+  const hasLastLogin =
+    record.last_login === null || record.last_login instanceof Date;
   return (
     hasUserId &&
     hasUsername &&

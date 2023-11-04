@@ -2,15 +2,19 @@ import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import Database from '../database';
 import { toUser } from './types';
+import { HttpError } from '../error/types';
 
 const database = Database.getInstance();
 
 export const authorizer = (req: Request, res: Response, next: NextFunction) => {
   if (!req.session.userId) {
-    console.log(`unauthorized session: ${req.session}`);
-    return res.status(401).send('You are not authenticated');
+    console.log(`Unauthorized session: ${req.session}`);
+    const err = new Error('You are not authenticated') as HttpError;
+    err.status = 401;
+    next(err);
+  } else {
+    next();
   }
-  next();
 };
 
 export const login = async (req: Request, res: Response) => {
@@ -78,16 +82,16 @@ export const logout = (req: Request, res: Response) => {
 };
 
 export const checkLoginStatus = async (req: Request, res: Response) => {
-  const userId = req.session.userId
+  const userId = req.session.userId;
   const isLoggedIn = userId !== undefined;
   let username = null;
-  
+
   if (isLoggedIn) {
     console.log('user is logged in userId:', userId);
-    
+
     const userRecord = await database.getUserById(userId);
-    username = userRecord ? userRecord.username : null; 
+    username = userRecord ? userRecord.username : null;
   }
-  
+
   res.json({ isLoggedIn, username });
 };

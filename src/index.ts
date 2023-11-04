@@ -3,7 +3,7 @@ import express from 'express';
 import session from 'express-session';
 import env from './env';
 import routes from './routes';
-import Database from './database'
+import Database from './database';
 import connectPgSimple from 'connect-pg-simple';
 
 const app = express();
@@ -15,19 +15,19 @@ app.use(express.json());
 app.use(
   session({
     store: new PgSession({
-      pool: db.getPool(), 
+      pool: db.getPool(),
       tableName: 'sessions',
     }),
     secret: env.SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: { secure: false, httpOnly: true },
-  })
+  }),
 );
 
-app.use(routes);
-
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(routes);
 
 app.listen(env.PORT, () => {
   console.log(`[server] running on port: ${env.PORT}`);
