@@ -22,7 +22,10 @@ class Database {
     }
     return Database.instance;
   }
-
+  public getPool(): Pool {
+    return this.pool;
+  }
+  
   public async query(text: string, params?: string[]): Promise<any> {
     const client = await this.pool.connect();
     try {
