@@ -10,7 +10,8 @@
     "module": "NodeNext",
     "outDir": "dist",
     "sourceMap": true,
-    "lib": ["ES2023", "DOM", "DOM.Iterable"]
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "typeRoots": ["./src/types.d.ts", "./node_modules/@types"]
   },
   "include": ["src/**/*", "public"],
   "exclude": ["node_modules", "dist"]
