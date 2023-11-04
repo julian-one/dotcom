@@ -67,12 +67,19 @@ export const register = async (req: Request, res: Response) => {
 };
 
 export const logout = (req: Request, res: Response) => {
+  console.log('logout begin')
   req.session.destroy((err) => {
     if (err) {
       console.error('Error during session destruction:', err);
       return res.status(500).send('Error logging out');
     }
+    console.log('logout ok')
     res.clearCookie('connect.sid');
     res.redirect('/');
   });
+};
+
+export const checkLoginStatus = (req: Request, res: Response) => {
+  const isLoggedIn = req.session.userId !== undefined;
+  res.json({ isLoggedIn });
 };

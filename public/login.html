@@ -39,7 +39,7 @@
 
             if (response.ok) {
                 alert('Logged in successfully!');
-                window.location.href = '/protected';
+                window.location.href = '/';
             } else {
                 alert('Failed to login. ' + (await response.text()));
             }

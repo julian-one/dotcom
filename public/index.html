@@ -9,18 +9,38 @@
 <body>
     <h1>hello 🌍</h1>
     <form>
-        <button class="button login-button" onclick="login()">Login</button>
-        <button class="button logout-button" onclick="logout()">Logout</button>
+        <button type="button" id="login-btn" class="button login-button" onclick="login()">Login</button>
+        <button type="button" id="logout-btn" class="button logout-button" onclick="logout()">Logout</button>
     </form>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/login-status')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.isLoggedIn) {
+                        document.getElementById('login-btn').style.display = 'none';
+                        document.getElementById('logout-btn').style.display = 'block';
+                    } else {
+                        document.getElementById('login-btn').style.display = 'block';
+                        document.getElementById('logout-btn').style.display = 'none';
+                    }
+                });
+        });
+
         function login() {
-            // Here you can redirect to a login page or open a login modal
-            window.location.href = '/login'; // Assuming you have a login page at this route
+            window.location.href = '/login';
         }
 
         function logout() {
-            window.location.href = '/logout';
+            fetch('/logout', { method: 'GET' })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = '/';
+                    } else {
+                        console.error('Logout failed');
+                    }
+                });
         }
     </script>
 </body>
