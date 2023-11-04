@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>hello 🌍</h1>
+    <h1 id="greeting">hello 🌍</h1>
     <form>
         <button type="button" id="login-btn" class="button login-button" onclick="login()">Login</button>
         <button type="button" id="logout-btn" class="button logout-button" onclick="logout()">Logout</button>
@@ -18,10 +18,13 @@
             fetch('/login-status')
                 .then(response => response.json())
                 .then(data => {
+                    const greetingElement = document.getElementById('greeting');
                     if (data.isLoggedIn) {
+                        greetingElement.textContent = `hello ${data.username}`;
                         document.getElementById('login-btn').style.display = 'none';
                         document.getElementById('logout-btn').style.display = 'block';
                     } else {
+                        greetingElement.textContent = 'hello 🌍';
                         document.getElementById('login-btn').style.display = 'block';
                         document.getElementById('logout-btn').style.display = 'none';
                     }

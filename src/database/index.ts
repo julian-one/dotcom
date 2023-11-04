@@ -26,7 +26,7 @@ class Database {
     return this.pool;
   }
   
-  public async query(text: string, params?: string[]): Promise<any> {
+  public async query(text: string, params?: any[]): Promise<any> {
     const client = await this.pool.connect();
     try {
       const result = await client.query(text, params);
@@ -49,6 +49,22 @@ class Database {
     }
     return result.rows[0];
   }
+
+  public async getUserById(id: number): Promise<UserRecord> {
+    const result = await this.query(
+      'SELECT * FROM users WHERE user_id = $1 LIMIT 1',
+      [id],
+    );
+    console.log('getUserById:', result)
+    if (result.rows.length === 0) {
+      throw new Error('User not found');
+    }
+    if (!isUserRecord(result.rows[0])) {
+      throw new Error('Record is not of the correct type UserRecord');
+    }
+    return result.rows[0];
+  }
+
 
   public async userExists(username: string, email: string): Promise<boolean> {
     const result = await this.query(

@@ -67,19 +67,27 @@ export const register = async (req: Request, res: Response) => {
 };
 
 export const logout = (req: Request, res: Response) => {
-  console.log('logout begin')
   req.session.destroy((err) => {
     if (err) {
       console.error('Error during session destruction:', err);
       return res.status(500).send('Error logging out');
     }
-    console.log('logout ok')
     res.clearCookie('connect.sid');
     res.redirect('/');
   });
 };
 
-export const checkLoginStatus = (req: Request, res: Response) => {
-  const isLoggedIn = req.session.userId !== undefined;
-  res.json({ isLoggedIn });
+export const checkLoginStatus = async (req: Request, res: Response) => {
+  const userId = req.session.userId
+  const isLoggedIn = userId !== undefined;
+  let username = null;
+  
+  if (isLoggedIn) {
+    console.log('user is logged in userId:', userId);
+    
+    const userRecord = await database.getUserById(userId);
+    username = userRecord ? userRecord.username : null; 
+  }
+  
+  res.json({ isLoggedIn, username });
 };
