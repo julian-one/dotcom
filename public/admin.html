@@ -26,7 +26,7 @@
 
                 users.forEach(user => {
                     const li = document.createElement('li');
-                    li.textContent = `Username: ${user.username}, Session Active: ${user.sessionActive}, Last Login: ${user.lastLogin}`;
+                    li.textContent = `id: ${user.id} Username: ${user.username}, Last Login: ${user.lastLogin}`;
                     userList.appendChild(li);
                 });
             } catch (error) {

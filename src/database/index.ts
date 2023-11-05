@@ -44,9 +44,6 @@ class Database {
     if (result.rows.length === 0) {
       throw new Error('User not found');
     }
-    if (!isUserRecord(result.rows[0])) {
-      throw new Error('Record is not of the correct type UserRecord');
-    }
     return result.rows[0];
   }
 
@@ -58,9 +55,6 @@ class Database {
     if (result.rows.length === 0) {
       throw new Error('User not found');
     }
-    if (!isUserRecord(result.rows[0])) {
-      throw new Error('Record is not of the correct type UserRecord');
-    }
     return result.rows[0];
   }
 
@@ -68,9 +62,6 @@ class Database {
     const result = await this.query(
       'SELECT * FROM users',
     );
-    if (!result.rows.every(isUserRecord)) {
-      throw new Error('One or more records are not of the correct type UserRecord');
-    }
     return result.rows;
   }
 
@@ -101,9 +92,6 @@ class Database {
     );
     if (result.rows.length === 0) {
       throw new Error('User creation failed');
-    }
-    if (!isUserRecord(result.rows[0])) {
-      throw new Error('Record is not of the correct type UserRecord');
     }
     return result.rows[0];
   }
