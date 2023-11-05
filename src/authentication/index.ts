@@ -4,9 +4,7 @@ import { toUser } from '../users/types';
 import Session from './session';
 import Database from '../database';
 import { isValidRegistration } from './validations';
-import {
-  UnauthorizedError,
-} from '../error/types';
+import { UnauthorizedError } from '../error/types';
 import { asyncHandler } from '../handler';
 
 const database: Database = Database.getInstance();
@@ -55,7 +53,7 @@ export const loginStatus = asyncHandler(async (req, res) => {
     const user = toUser(userRecord);
     return res.status(200).json({
       isLoggedIn: true,
-      username: user.username
+      username: user.username,
     });
   } catch (error) {
     console.error(error);

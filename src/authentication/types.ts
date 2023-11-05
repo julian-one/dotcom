@@ -9,5 +9,4 @@ type Login = {
   password: string;
 };
 
-
 export { Registration, Login };

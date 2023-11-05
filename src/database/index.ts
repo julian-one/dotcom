@@ -59,9 +59,7 @@ class Database {
   }
 
   public async getUsers(): Promise<UserRecord[]> {
-    const result = await this.query(
-      'SELECT * FROM users',
-    );
+    const result = await this.query('SELECT * FROM users');
     return result.rows;
   }
 
