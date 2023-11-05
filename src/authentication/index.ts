@@ -1,16 +1,14 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
-import Database from '../database';
-import { UserRecord } from '../database/types';
 import { Login, Registration, toUser } from './types';
+import Session from './session';
+import Database from '../database';
+import { isValidRegistration } from './validations';
 import {
   SessionDestructionError,
   SessionInitializationError,
-  UnauthorizedError,
   ValidationError,
 } from '../error/types';
-import { isValidRegistration } from './validations';
-import Session from './session';
 
 const database: Database = Database.getInstance();
 
@@ -24,17 +22,17 @@ export const login = async (req: Request, res: Response) => {
 
     if (user && (await bcrypt.compare(password, user.password))) {
       await Session.initialize(req, user.id);
-      res.status(200).send('logged in successfully');
+      res.status(200).json({ message: 'Logged in successfully' });
     } else {
-      res.status(401).send('invalid username or password');
+      res.status(401).json({ message: 'Invalid username or password' });
     }
   } catch (error) {
     console.error(error);
     if (error instanceof SessionInitializationError) {
-      res.status(500).send(error.message);
+      res.status(500).json({ message: error.message });
     } else {
       console.error(error);
-      res.status(500).send('something went wrong logging in');
+      res.status(500).json({ message: 'Something went wrong logging in' });
     }
   }
 };
@@ -71,33 +69,14 @@ export const register = async (req: Request, res: Response) => {
 export const logout = async (req: Request, res: Response) => {
   try {
     await Session.destroy(req, res);
-    res.redirect('/');
+    res.status(200).json({ message: 'Logged out successfully' });
   } catch (error) {
     console.error(error);
     if (error instanceof SessionDestructionError) {
-      res.status(error.statusCode).send(error.message);
+      res.status(error.statusCode).json({ message: error.message });
     } else {
-      res.status(500).send('something went wrong logging out');
+      res.status(500).json({ message: 'Something went wrong logging out' });
     }
   }
 };
 
-export const checkLoginStatus = async (req: Request, res: Response) => {
-  const userId: number | undefined = req.session.userId;
-  const isLoggedIn = userId !== undefined;
-
-  let username = null;
-  if (isLoggedIn) {
-    const userRecord: UserRecord = await database.getUserById(userId);
-    username = userRecord.username;
-  }
-  res.json({ isLoggedIn, username });
-};
-
-export const authorizer = (req: Request, res: Response, next: NextFunction) => {
-  if (!req.session.userId) {
-    next(new UnauthorizedError('you are not authenticated'));
-  } else {
-    next();
-  }
-};

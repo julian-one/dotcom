@@ -1,12 +1,6 @@
 import path from 'path';
 import { Router } from 'express';
-import {
-  authorizer,
-  login,
-  register,
-  logout,
-  checkLoginStatus,
-} from './authentication';
+import { register, login, logout } from './authentication';
 import {
   ValidationError,
   UnauthorizedError,
@@ -15,13 +9,29 @@ import {
   NotFoundError,
 } from './error/types';
 import { NextFunction, Request, Response } from 'express';
+import Session from './authentication/session';
+
+const authorizer = (req: Request, res: Response, next: NextFunction) => {
+  if (!req.session.userId) {
+    next(new UnauthorizedError('you are not authenticated'));
+  } else {
+    next();
+  }
+};
 
 const router = Router();
 
 router.post('/login', login);
 router.post('/register', register);
 router.get('/logout', logout);
-router.get('/login-status', checkLoginStatus);
+
+router.get('/login-status', async (req, res, next) => {
+  try {
+    await Session.isValid(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
 
 router.get('/admin', authorizer, (req, res) => {
   res.send('Protected content');
@@ -64,11 +74,9 @@ router.use(
       statusCode = err.statusCode;
       message = err.message;
     } else {
-      // Default to 500 Server Error
       statusCode = 500;
       message = 'Internal Server Error';
     }
-
     console.log('Error status code:', statusCode);
     res
       .status(statusCode)

@@ -24,13 +24,25 @@ class Session {
         if (err) {
           reject(new SessionDestructionError('Error destroying session'));
         } else {
-          //   if (req.session.cookie) {
-          //     res.clearCookie('connect.sid');
-          //   }
           resolve();
         }
       });
     });
+  }
+
+  private static isActive(req: Request): boolean {
+    const expiration = req.session.cookie.expires;
+    if (expiration) {
+      return new Date(expiration) > new Date();
+    }
+    return true;
+  }
+
+  static async isValid(req: Request, res: Response): Promise<void> {
+    const userId: number | undefined = req.session.userId;
+    const isLoggedIn = userId !== undefined && this.isActive(req);
+
+    res.json({ isLoggedIn });
   }
 }
 
