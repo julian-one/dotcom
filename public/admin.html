@@ -1,40 +1,55 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>julian one</title>
-    <link rel="stylesheet" href="styles.css">
+<html lang="en" class="dark">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard</title>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="datatables.css">
 </head>
+
 <body>
     <h1>Admin</h1>
     <section id="userList">
         <h2>Users</h2>
-        <ul id="users"></ul>
+        <table id="usersTable" class="cell-border row-border hover" style="width:100%">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Created On</th>
+                    <th>Last Login</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- User rows will be inserted here by JavaScript -->
+            </tbody>
+        </table>
     </section>
     <script>
-        async function fetchUsers() {
-            try {
-                const response = await fetch('/users'); 
-                if (!response.ok) {
-                    throw new Error('Network response was not ok ' + response.statusText);
+        $(document).ready(function () {
+            const table = $('#usersTable').DataTable({
+                "ajax": {
+                    "url": "/users",
+                    "dataSrc": "",
+                },
+                "columns": [
+                    { "data": "id" },
+                    { "data": "username" },
+                    { "data": "email" },
+                    { "data": "createdOn" },
+                    { "data": "lastLogin" }
+                ],
+                "language": {
+                    "searchPlaceholder": "Search ...",
+                    "search": "" // This removes the 'search:' label text
                 }
-                const users = await response.json();
-                const userList = document.getElementById('users');
-                userList.innerHTML = ''; 
-
-
-                users.forEach(user => {
-                    const li = document.createElement('li');
-                    li.textContent = `id: ${user.id} Username: ${user.username}, Last Login: ${user.lastLogin}`;
-                    userList.appendChild(li);
-                });
-            } catch (error) {
-                console.error('Could not fetch users:', error);
-                document.getElementById('users').innerHTML = `<li>Error fetching users: ${error.message}</li>`;
-            }
-        }
-        fetchUsers();
+            });
+        });
     </script>
 </body>
+
 </html>
