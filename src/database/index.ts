@@ -64,6 +64,16 @@ class Database {
     return result.rows[0];
   }
 
+  public async getUsers(): Promise<UserRecord[]> {
+    const result = await this.query(
+      'SELECT * FROM users',
+    );
+    if (!result.rows.every(isUserRecord)) {
+      throw new Error('One or more records are not of the correct type UserRecord');
+    }
+    return result.rows;
+  }
+
   public async checkUserExistsByUsername(username: string): Promise<boolean> {
     const result = await this.query(
       'SELECT * FROM users WHERE username = $1 LIMIT 1',

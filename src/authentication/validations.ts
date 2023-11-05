@@ -7,22 +7,10 @@ import { ValidationError } from '../error/types';
 const filter = new Filter();
 
 const isUsernameValid = (username: string): boolean => {
-  console.log('isUsernameValid, username', username);
-
-  const usernameParts = username.split(/\s+/);
-
-  console.log('isUsernameValid, usernameParts', usernameParts);
-
-  for (const part of usernameParts) {
-    if (filter.isProfane(part)) {
-      console.log('isUsernameValid, part', part);
-
-      return false;
-    }
+  if (filter.isProfane(username)) {
+    return false;
   }
   if (validator.contains(username, ' ')) {
-    console.log('isUsernameValid, whitespace', username);
-
     return false;
   }
   return true;

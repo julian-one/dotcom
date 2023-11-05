@@ -7,6 +7,34 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>sir admin</h1>
+    <h1>Admin</h1>
+    <section id="userList">
+        <h2>Users</h2>
+        <ul id="users"></ul>
+    </section>
+    <script>
+        async function fetchUsers() {
+            try {
+                const response = await fetch('/users'); 
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                const users = await response.json();
+                const userList = document.getElementById('users');
+                userList.innerHTML = ''; 
+
+
+                users.forEach(user => {
+                    const li = document.createElement('li');
+                    li.textContent = `Username: ${user.username}, Session Active: ${user.sessionActive}, Last Login: ${user.lastLogin}`;
+                    userList.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Could not fetch users:', error);
+                document.getElementById('users').innerHTML = `<li>Error fetching users: ${error.message}</li>`;
+            }
+        }
+        fetchUsers();
+    </script>
 </body>
 </html>

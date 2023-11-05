@@ -1,6 +1,6 @@
 import path from 'path';
 import { Router } from 'express';
-import { register, login, logout } from './authentication';
+import { register, login, logout, loginStatus } from './authentication';
 import {
   ValidationError,
   UnauthorizedError,
@@ -9,7 +9,14 @@ import {
   NotFoundError,
 } from './error/types';
 import { NextFunction, Request, Response } from 'express';
-import Session from './authentication/session';
+import { getUsers } from './users';
+
+const router = Router();
+
+router.post('/login', login);
+router.get('/login-status', loginStatus);
+router.get('/logout', logout);
+router.post('/register', register);
 
 const authorizer = (req: Request, res: Response, next: NextFunction) => {
   if (!req.session.userId) {
@@ -19,22 +26,10 @@ const authorizer = (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const router = Router();
-
-router.post('/login', login);
-router.post('/register', register);
-router.get('/logout', logout);
-
-router.get('/login-status', async (req, res, next) => {
-  try {
-    await Session.isValid(req, res);
-  } catch (error) {
-    next(error);
-  }
-});
+router.get('/users', authorizer, getUsers);
 
 router.get('/admin', authorizer, (req, res) => {
-  res.send('Protected content');
+  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
 router.get('/register', (req, res) => {
