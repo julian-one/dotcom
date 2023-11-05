@@ -65,10 +65,18 @@ class Database {
     return result.rows[0];
   }
 
-  public async userExists(username: string, email: string): Promise<boolean> {
+  public async checkUserExistsByUsername(username: string): Promise<boolean> {
     const result = await this.query(
-      'SELECT * FROM users WHERE username = $1 OR email = $2 LIMIT 1',
-      [username, email],
+      'SELECT * FROM users WHERE username = $1 LIMIT 1',
+      [username],
+    );
+    return result.rows.length > 0;
+  }
+
+  public async checkUserExistsByEmail(email: string): Promise<boolean> {
+    const result = await this.query(
+      'SELECT * FROM users WHERE email = $1 LIMIT 1',
+      [email],
     );
     return result.rows.length > 0;
   }

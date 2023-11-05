@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import Database from '../database';
 import { toUser } from './types';
 import { HttpError } from '../error/types';
+import { isUsernameValid, isEmailValid, isPasswordStrong } from './validations';
 
 const database = Database.getInstance();
 
@@ -19,7 +20,6 @@ export const authorizer = (req: Request, res: Response, next: NextFunction) => {
 
 export const login = async (req: Request, res: Response) => {
   const { username, password } = req.body;
-
   try {
     const userRecord = await database.getUserByUsername(username);
     const user = toUser(userRecord);
@@ -43,25 +43,39 @@ export const login = async (req: Request, res: Response) => {
 
 export const register = async (req: Request, res: Response) => {
   const { username, email, password } = req.body;
+  console.log( req.body )
+  if (isUsernameValid(username)) {
+    return res.status(400).send('Username contains whitespace or profanity');
+  }
+  if (await database.checkUserExistsByUsername(username)) {
+    return res.status(409).send('Username is already in use.');
+  }
+  if (!isEmailValid(email)) {
+    return res.status(400).send('Email is invalid.');
+  }
+  if (await database.checkUserExistsByEmail(email)) {
+    return res.status(409).send('Email is already in use.');
+  }
+  if (!isPasswordStrong(password)) {
+    return res
+      .status(400)
+      .send('Password does not meet the required standards.');
+  }
 
   try {
-    const userExists = await database.userExists(username, email);
-    if (userExists) {
-      return res.status(409).send('User already exists.');
-    }
     const hashedPassword = await bcrypt.hash(password, 10);
-    const dbNewUser = await database.createUser(
+    const userRecord = await database.createUser(
       username,
       email,
       hashedPassword,
     );
-    const newUser = toUser(dbNewUser);
+    const user = toUser(userRecord);
 
     req.session.regenerate((err) => {
       if (err) {
         return res.status(500).send('Error regenerating session');
       }
-      req.session.userId = newUser.id;
+      req.session.userId = user.id;
       res.status(201).send('User registered successfully.');
     });
   } catch (error) {
