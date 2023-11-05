@@ -55,7 +55,6 @@ class Database {
       'SELECT * FROM users WHERE user_id = $1 LIMIT 1',
       [id],
     );
-    console.log('getUserById:', result);
     if (result.rows.length === 0) {
       throw new Error('User not found');
     }

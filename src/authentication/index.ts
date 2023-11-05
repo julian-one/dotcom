@@ -1,68 +1,50 @@
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import Database from '../database';
-import { toUser } from './types';
-import { HttpError } from '../error/types';
-import { isUsernameValid, isEmailValid, isPasswordStrong } from './validations';
+import { UserRecord } from '../database/types';
+import { Login, Registration, toUser } from './types';
+import {
+  SessionDestructionError,
+  SessionInitializationError,
+  UnauthorizedError,
+  ValidationError,
+} from '../error/types';
+import { isValidRegistration } from './validations';
+import Session from './session';
 
-const database = Database.getInstance();
-
-export const authorizer = (req: Request, res: Response, next: NextFunction) => {
-  if (!req.session.userId) {
-    console.log(`Unauthorized session: ${req.session}`);
-    const err = new Error('You are not authenticated') as HttpError;
-    err.status = 401;
-    next(err);
-  } else {
-    next();
-  }
-};
+const database: Database = Database.getInstance();
 
 export const login = async (req: Request, res: Response) => {
   const { username, password } = req.body;
+  const login: Login = { username, password };
+
   try {
     const userRecord = await database.getUserByUsername(username);
     const user = toUser(userRecord);
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      req.session.regenerate((err) => {
-        if (err) {
-          return res.status(500).send('Error regenerating session');
-        }
-        req.session.userId = user.id;
-        res.status(200).send('Logged in successfully');
-      });
+      await Session.initialize(req, user.id);
+      res.status(200).send('logged in successfully');
     } else {
-      res.status(401).send('Invalid username or password');
+      res.status(401).send('invalid username or password');
     }
   } catch (error) {
-    console.error('Error logging in:', error);
-    res.status(500).send('Error logging in');
+    console.error(error);
+    if (error instanceof SessionInitializationError) {
+      res.status(500).send(error.message);
+    } else {
+      console.error(error);
+      res.status(500).send('something went wrong logging in');
+    }
   }
 };
 
 export const register = async (req: Request, res: Response) => {
   const { username, email, password } = req.body;
-  console.log( req.body )
-  if (isUsernameValid(username)) {
-    return res.status(400).send('Username contains whitespace or profanity');
-  }
-  if (await database.checkUserExistsByUsername(username)) {
-    return res.status(409).send('Username is already in use.');
-  }
-  if (!isEmailValid(email)) {
-    return res.status(400).send('Email is invalid.');
-  }
-  if (await database.checkUserExistsByEmail(email)) {
-    return res.status(409).send('Email is already in use.');
-  }
-  if (!isPasswordStrong(password)) {
-    return res
-      .status(400)
-      .send('Password does not meet the required standards.');
-  }
+  const registration: Registration = { username, email, password };
 
   try {
+    await isValidRegistration(database, registration);
     const hashedPassword = await bcrypt.hash(password, 10);
     const userRecord = await database.createUser(
       username,
@@ -70,42 +52,52 @@ export const register = async (req: Request, res: Response) => {
       hashedPassword,
     );
     const user = toUser(userRecord);
-
-    req.session.regenerate((err) => {
-      if (err) {
-        return res.status(500).send('Error regenerating session');
-      }
-      req.session.userId = user.id;
-      res.status(201).send('User registered successfully.');
-    });
+    await Session.initialize(req, user.id);
+    res.status(201).json({ message: 'Registered successfully' });
   } catch (error) {
-    console.error('Error registering new user:', error);
-    res.status(500).send('Error registering new user.');
+    console.error(error);
+    if (error instanceof ValidationError) {
+      res.status(error.statusCode).json({ message: error.message });
+    } else if (error instanceof SessionInitializationError) {
+      res.status(error.statusCode).json({ message: error.message });
+    } else {
+      res
+        .status(500)
+        .json({ message: 'Something went wrong registering user' });
+    }
   }
 };
 
-export const logout = (req: Request, res: Response) => {
-  req.session.destroy((err) => {
-    if (err) {
-      console.error('Error during session destruction:', err);
-      return res.status(500).send('Error logging out');
-    }
-    res.clearCookie('connect.sid');
+export const logout = async (req: Request, res: Response) => {
+  try {
+    await Session.destroy(req, res);
     res.redirect('/');
-  });
+  } catch (error) {
+    console.error(error);
+    if (error instanceof SessionDestructionError) {
+      res.status(error.statusCode).send(error.message);
+    } else {
+      res.status(500).send('something went wrong logging out');
+    }
+  }
 };
 
 export const checkLoginStatus = async (req: Request, res: Response) => {
-  const userId = req.session.userId;
+  const userId: number | undefined = req.session.userId;
   const isLoggedIn = userId !== undefined;
+
   let username = null;
-
   if (isLoggedIn) {
-    console.log('user is logged in userId:', userId);
-
-    const userRecord = await database.getUserById(userId);
-    username = userRecord ? userRecord.username : null;
+    const userRecord: UserRecord = await database.getUserById(userId);
+    username = userRecord.username;
   }
-
   res.json({ isLoggedIn, username });
+};
+
+export const authorizer = (req: Request, res: Response, next: NextFunction) => {
+  if (!req.session.userId) {
+    next(new UnauthorizedError('you are not authenticated'));
+  } else {
+    next();
+  }
 };

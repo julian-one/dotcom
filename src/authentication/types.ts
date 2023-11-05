@@ -23,4 +23,15 @@ const toUser = (record: UserRecord): User => {
   };
 };
 
-export { User, toUser };
+type Registration = {
+  username: string;
+  email: string;
+  password: string;
+};
+
+type Login = {
+  username: string;
+  password: string;
+};
+
+export { User, toUser, Registration, Login };

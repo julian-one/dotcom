@@ -7,7 +7,13 @@ import {
   logout,
   checkLoginStatus,
 } from './authentication';
-import { HttpError } from './error/types';
+import {
+  ValidationError,
+  UnauthorizedError,
+  SessionInitializationError,
+  SessionDestructionError,
+  NotFoundError,
+} from './error/types';
 import { NextFunction, Request, Response } from 'express';
 
 const router = Router();
@@ -34,20 +40,43 @@ router.get('/', (req, res) => {
 });
 
 router.use((req: Request, res: Response, next: NextFunction): void => {
-  const err: HttpError = new Error('Not Found') as HttpError;
-  err.status = 404;
-  next(err);
+  next(new NotFoundError('Not Found', 404));
 });
 
 router.use(
-  (err: HttpError, _req: Request, res: Response, _next: NextFunction): void => {
-    const statusCode = err.status || 500;
-    console.log('statusCode:', statusCode);
-    res.redirect(
-      `/error.html?status=${statusCode}&message=${encodeURIComponent(
-        err.message || 'Internal Server Error',
-      )}`,
-    );
+  (err: Error, _req: Request, res: Response, _next: NextFunction): void => {
+    let statusCode: number;
+    let message: string;
+
+    if (err instanceof UnauthorizedError) {
+      statusCode = err.statusCode;
+      message = err.message;
+    } else if (err instanceof NotFoundError) {
+      statusCode = err.statusCode;
+      message = err.message;
+    } else if (err instanceof ValidationError) {
+      statusCode = err.statusCode;
+      message = err.message;
+    } else if (
+      err instanceof SessionInitializationError ||
+      err instanceof SessionDestructionError
+    ) {
+      statusCode = err.statusCode;
+      message = err.message;
+    } else {
+      // Default to 500 Server Error
+      statusCode = 500;
+      message = 'Internal Server Error';
+    }
+
+    console.log('Error status code:', statusCode);
+    res
+      .status(statusCode)
+      .redirect(
+        `/error.html?status=${statusCode}&message=${encodeURIComponent(
+          message,
+        )}`,
+      );
   },
 );
 

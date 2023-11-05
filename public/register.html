@@ -6,10 +6,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Custom alert styles */
+        .custom-alert {
+            padding: 20px;
+            background-color: #f44336;
+            /* Red */
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        /* The close button */
+        .closebtn {
+            margin-left: 15px;
+            color: white;
+            font-weight: bold;
+            float: right;
+            font-size: 22px;
+            line-height: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        /* When moving the mouse over the close button */
+        .closebtn:hover {
+            color: black;
+        }
+    </style>
 </head>
 
 <body>
     <h1>Register</h1>
+    <div id="alert-placeholder" style="display: none;"></div>
     <form id="register-form">
         <input type="text" id="username" placeholder="Username" required>
         <input type="email" id="email" placeholder="Email" required>
@@ -22,12 +50,21 @@
             const username = document.getElementById('username').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-    
+            const alertPlaceholder = document.getElementById('alert-placeholder');
+            function showAlert(message) {
+                alertPlaceholder.innerHTML = `
+                    <div class="custom-alert">
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    ${message}
+                    </div>`;
+                alertPlaceholder.style.display = 'block';
+            }
+
             if (!username || !email || !password) {
                 alert('Please fill in all fields');
                 return;
             }
-    
+
             try {
                 const response = await fetch('/register', {
                     method: 'POST',
@@ -36,25 +73,25 @@
                     },
                     body: JSON.stringify({ username, email, password }),
                 });
-    
+
                 if (response.ok) {
-                    alert('Registered successfully!');
+                    showAlert('Registered successfully!');
                     window.location.href = '/';
                 } else if (response.status === 400) {
                     const message = await response.text();
-                    alert(`Registration failed: ${message}`);
+                    showAlert(`Registration failed: ${message.error}`);
                 } else if (response.status === 409) {
-                    alert('Registration failed: User already exists.');
+                    showAlert(`Registration failed: User already exists: ${message.error}`);
                 } else {
-                    const message = await response.text();
-                    alert(`Registration failed: ${message}`);
+                    const message = await response.json();
+                    showAlert(`Registration failed: ${message.error}`);
                 }
             } catch (error) {
                 console.error('Registration failed:', error);
-                alert('An error occurred during registration. Please try again later.');
+                showAlert('An error occurred during registration. Please try again later.');
             }
         };
-    </script>    
+    </script>
 </body>
 
 </html>

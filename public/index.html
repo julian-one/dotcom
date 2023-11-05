@@ -11,6 +11,7 @@
     <form>
         <button type="button" id="login-btn" class="button login-button" onclick="login()">Login</button>
         <button type="button" id="logout-btn" class="button logout-button" onclick="logout()">Logout</button>
+        <button type="button" id="register-btn" class="button register-btn" onclick="register()">Register</button>
     </form>
 
     <script>
@@ -45,6 +46,11 @@
                     }
                 });
         }
+
+        function register() {
+            window.location.href = '/register';
+        }
+
     </script>
 </body>
 </html>
