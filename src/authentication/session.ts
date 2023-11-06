@@ -3,33 +3,61 @@ import {
   SessionInitializationError,
   SessionDestructionError,
 } from '../error/types';
+import connectPgSimple from 'connect-pg-simple';
+import session from 'express-session';
+import { Pool } from 'pg';
+import env from '../env';
+
+const PgSession = connectPgSimple(session);
 
 class Session {
+
+  static configure(db: { getPool: () => Pool }) {
+    return session({
+      store: new PgSession({
+        pool: db.getPool(),
+        tableName: 'sessions',
+      }),
+      secret: env.SECRET,
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        secure: true,
+        httpOnly: true,
+        sameSite: 'strict',
+        maxAge: 60 * 60 * 1000,
+      },
+    });
+  }
+
   static initialize(req: Request, userId: number): Promise<void> {
     return new Promise((resolve, reject) => {
       req.session.regenerate((err) => {
         if (err) {
+          console.error('Session initialization failed:', err);
           reject(new SessionInitializationError('Error regenerating session'));
         } else {
           req.session.userId = userId;
+          console.log(`Session initialized for user ${userId}`);
           resolve();
         }
       });
     });
   }
-
+  
   static destroy(req: Request, res: Response): Promise<void> {
     return new Promise((resolve, reject) => {
       req.session.destroy((err) => {
         if (err) {
+          console.error('Session destruction failed:', err);
           reject(new SessionDestructionError('Error destroying session'));
         } else {
+          console.log(`Session destroyed for user ${req.session.userId}`);
           resolve();
         }
       });
     });
   }
-
   private static isActive(req: Request): boolean {
     const expiration = req.session.cookie.expires;
     if (expiration) {

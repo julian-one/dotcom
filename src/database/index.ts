@@ -1,5 +1,5 @@
 import { Pool } from 'pg';
-import { UserRecord, isUserRecord } from './types';
+import { UserRecord } from './types';
 import env from '../env';
 
 class Database {

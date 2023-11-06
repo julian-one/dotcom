@@ -48,39 +48,24 @@ router.use((req: Request, res: Response, next: NextFunction): void => {
   next(new NotFoundError('Not Found', 404));
 });
 
-router.use(
-  (err: Error, _req: Request, res: Response, _next: NextFunction): void => {
-    let statusCode: number;
-    let message: string;
+router.use((err: Error, _req: Request, res: Response, _next: NextFunction): void => {
+  let statusCode = 500;
+  let message = 'Internal Server Error';
 
-    if (err instanceof UnauthorizedError) {
-      statusCode = err.statusCode;
-      message = err.message;
-    } else if (err instanceof NotFoundError) {
-      statusCode = err.statusCode;
-      message = err.message;
-    } else if (err instanceof ValidationError) {
-      statusCode = err.statusCode;
-      message = err.message;
-    } else if (
-      err instanceof SessionInitializationError ||
-      err instanceof SessionDestructionError
-    ) {
-      statusCode = err.statusCode;
-      message = err.message;
-    } else {
-      statusCode = 500;
-      message = 'Internal Server Error';
-    }
-    console.log('Error status code:', statusCode);
-    res
-      .status(statusCode)
-      .redirect(
-        `/error.html?status=${statusCode}&message=${encodeURIComponent(
-          message,
-        )}`,
-      );
-  },
-);
+  if (
+    err instanceof UnauthorizedError ||
+    err instanceof NotFoundError ||
+    err instanceof ValidationError ||
+    err instanceof SessionInitializationError ||
+    err instanceof SessionDestructionError
+  ) {
+    statusCode = err.statusCode;
+    message = err.message;
+  }
+
+  console.log('Error status code:', statusCode);
+  res.status(statusCode).redirect(`/error.html?status=${statusCode}&message=${encodeURIComponent(message)}`);
+});
+
 
 export default router;
