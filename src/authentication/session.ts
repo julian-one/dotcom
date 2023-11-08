@@ -21,7 +21,7 @@ class Session {
       resave: false,
       saveUninitialized: false,
       cookie: {
-        secure: process.env.ENV === 'dev' ? false : true,
+        secure: env.IS_COOKIE_SECURE,
         httpOnly: true,
         sameSite: 'strict',
         maxAge: 60 * 60 * 1000,
