@@ -18,6 +18,16 @@ class UnauthorizedError extends Error {
   }
 }
 
+class ForbiddenError extends Error {
+  statusCode: number;
+
+  constructor(message: string = 'Forbidden', statusCode: number = 403) {
+    super(message);
+    this.name = 'ForbiddenError';
+    this.statusCode = statusCode;
+  }
+}
+
 class NotFoundError extends Error {
   statusCode: number;
 
@@ -52,6 +62,7 @@ export {
   ValidationError,
   NotFoundError,
   UnauthorizedError,
+  ForbiddenError,
   SessionInitializationError,
   SessionDestructionError,
 };
