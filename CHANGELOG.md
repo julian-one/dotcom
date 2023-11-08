@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/julian-one/dotcom/compare/v1.0.2...v1.0.3) (2023-11-08)
+
+
+### Bug Fixes
+
+* secure cookies ([#4](https://github.com/julian-one/dotcom/issues/4)) ([263af1d](https://github.com/julian-one/dotcom/commit/263af1d28ae2252298b1bd65ba61c45afb50ef84))
+
 ## [1.0.2](https://github.com/julian-one/dotcom/compare/v1.0.1...v1.0.2) (2023-11-08)
 
 
