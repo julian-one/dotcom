@@ -22,9 +22,18 @@ function getEnvNumber(key: string): number {
   return parsed;
 }
 
+function getEnvBoolean(key: string): boolean {
+  const value = process.env[key];
+  if (value === undefined) {
+    throw new Error(`${key} environment variable not set`);
+  }
+  return value.toLowerCase() === 'true';
+}
+
 const env = {
   PORT: getEnvNumber('PORT'),
   SECRET: getEnvString('SECRET'),
+  IS_COOKIE_SECURE: getEnvBoolean('IS_COOKIE_SECURE'),
   DB_USER: getEnvString('DB_USER'),
   DB_HOST: getEnvString('DB_HOST'),
   DB_NAME: getEnvString('DB_NAME'),
