@@ -63,8 +63,6 @@ router.use(
       statusCode = err.statusCode;
       message = err.message;
     }
-
-    console.log('Error status code:', statusCode);
     res
       .status(statusCode)
       .redirect(

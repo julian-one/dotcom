@@ -32,7 +32,7 @@
       { "ignoreParameters": true }
     ],
     "eqeqeq": ["error", "always"],
-    "no-console": "off",
+    "no-console": "error",
     "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
     "no-var": "error",
     "prefer-const": "error"
