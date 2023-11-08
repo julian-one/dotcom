@@ -1,0 +1,67 @@
+table {
+    border: 2px solid orange;
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+th,
+td {
+    border: 1px solid orange;
+}
+
+tr {
+    background-color: #222;
+}
+
+tr:hover {
+    background-color: #333;
+}
+
+th {
+    padding: 12px 15px;
+    background-color: #333;
+    color: orange;
+}
+
+td {
+    padding: 15px;
+    color: #fff;
+}
+
+thead th {
+    position: sticky;
+    top: 0;
+}
+
+th.sorting::after,
+th.sorting_asc::after,
+th.sorting_desc::after {
+    color: white;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    background: #333;
+    color: white;
+    border: 1px solid #444;
+    padding: 5px 10px;
+    margin-left: 5px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: orange;
+    color: #121212;
+}
+
+.dataTables_filter {
+    margin-bottom: 20px;
+}
+
+.dataTables_filter label {
+    display: block;
+}
+
+.dataTables_filter label::before {
+    content: none;
+}

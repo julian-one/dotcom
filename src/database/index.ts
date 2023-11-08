@@ -1,5 +1,5 @@
 import { Pool } from 'pg';
-import { UserRecord, isUserRecord } from './types';
+import { UserRecord } from './types';
 import env from '../env';
 
 class Database {
@@ -44,9 +44,6 @@ class Database {
     if (result.rows.length === 0) {
       throw new Error('User not found');
     }
-    if (!isUserRecord(result.rows[0])) {
-      throw new Error('Record is not of the correct type UserRecord');
-    }
     return result.rows[0];
   }
 
@@ -55,20 +52,29 @@ class Database {
       'SELECT * FROM users WHERE user_id = $1 LIMIT 1',
       [id],
     );
-    console.log('getUserById:', result);
     if (result.rows.length === 0) {
       throw new Error('User not found');
-    }
-    if (!isUserRecord(result.rows[0])) {
-      throw new Error('Record is not of the correct type UserRecord');
     }
     return result.rows[0];
   }
 
-  public async userExists(username: string, email: string): Promise<boolean> {
+  public async getUsers(): Promise<UserRecord[]> {
+    const result = await this.query('SELECT * FROM users');
+    return result.rows;
+  }
+
+  public async checkUserExistsByUsername(username: string): Promise<boolean> {
     const result = await this.query(
-      'SELECT * FROM users WHERE username = $1 OR email = $2 LIMIT 1',
-      [username, email],
+      'SELECT * FROM users WHERE username = $1 LIMIT 1',
+      [username],
+    );
+    return result.rows.length > 0;
+  }
+
+  public async checkUserExistsByEmail(email: string): Promise<boolean> {
+    const result = await this.query(
+      'SELECT * FROM users WHERE email = $1 LIMIT 1',
+      [email],
     );
     return result.rows.length > 0;
   }
@@ -84,9 +90,6 @@ class Database {
     );
     if (result.rows.length === 0) {
       throw new Error('User creation failed');
-    }
-    if (!isUserRecord(result.rows[0])) {
-      throw new Error('Record is not of the correct type UserRecord');
     }
     return result.rows[0];
   }

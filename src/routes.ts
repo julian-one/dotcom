@@ -1,24 +1,35 @@
 import path from 'path';
 import { Router } from 'express';
+import { register, login, logout, loginStatus } from './authentication';
 import {
-  authorizer,
-  login,
-  register,
-  logout,
-  checkLoginStatus,
-} from './authentication';
-import { HttpError } from './error/types';
+  ValidationError,
+  UnauthorizedError,
+  SessionInitializationError,
+  SessionDestructionError,
+  NotFoundError,
+} from './error/types';
 import { NextFunction, Request, Response } from 'express';
+import { getUsers } from './users';
 
 const router = Router();
 
 router.post('/login', login);
-router.post('/register', register);
+router.get('/login-status', loginStatus);
 router.get('/logout', logout);
-router.get('/login-status', checkLoginStatus);
+router.post('/register', register);
+
+const authorizer = (req: Request, res: Response, next: NextFunction) => {
+  if (!req.session.userId) {
+    next(new UnauthorizedError('you are not authenticated'));
+  } else {
+    next();
+  }
+};
+
+router.get('/users', authorizer, getUsers);
 
 router.get('/admin', authorizer, (req, res) => {
-  res.send('Protected content');
+  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
 router.get('/register', (req, res) => {
@@ -34,20 +45,31 @@ router.get('/', (req, res) => {
 });
 
 router.use((req: Request, res: Response, next: NextFunction): void => {
-  const err: HttpError = new Error('Not Found') as HttpError;
-  err.status = 404;
-  next(err);
+  next(new NotFoundError('Not Found', 404));
 });
 
 router.use(
-  (err: HttpError, _req: Request, res: Response, _next: NextFunction): void => {
-    const statusCode = err.status || 500;
-    console.log('statusCode:', statusCode);
-    res.redirect(
-      `/error.html?status=${statusCode}&message=${encodeURIComponent(
-        err.message || 'Internal Server Error',
-      )}`,
-    );
+  (err: Error, _req: Request, res: Response, _next: NextFunction): void => {
+    let statusCode = 500;
+    let message = 'Internal Server Error';
+
+    if (
+      err instanceof UnauthorizedError ||
+      err instanceof NotFoundError ||
+      err instanceof ValidationError ||
+      err instanceof SessionInitializationError ||
+      err instanceof SessionDestructionError
+    ) {
+      statusCode = err.statusCode;
+      message = err.message;
+    }
+    res
+      .status(statusCode)
+      .redirect(
+        `/error.html?status=${statusCode}&message=${encodeURIComponent(
+          message,
+        )}`,
+      );
   },
 );
 

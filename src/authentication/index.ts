@@ -1,97 +1,61 @@
-import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
+import { Login, Registration } from './types';
+import { toUser } from '../users/types';
+import Session from './session';
 import Database from '../database';
-import { toUser } from './types';
-import { HttpError } from '../error/types';
+import { isValidRegistration } from './validations';
+import { UnauthorizedError } from '../error/types';
+import { asyncHandler } from '../handler';
 
-const database = Database.getInstance();
+const database: Database = Database.getInstance();
 
-export const authorizer = (req: Request, res: Response, next: NextFunction) => {
-  if (!req.session.userId) {
-    console.log(`Unauthorized session: ${req.session}`);
-    const err = new Error('You are not authenticated') as HttpError;
-    err.status = 401;
-    next(err);
-  } else {
-    next();
-  }
-};
-
-export const login = async (req: Request, res: Response) => {
+export const login = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
+  const login: Login = { username, password };
 
-  try {
-    const userRecord = await database.getUserByUsername(username);
-    const user = toUser(userRecord);
+  const userRecord = await database.getUserByUsername(login.username);
+  const user = toUser(userRecord);
 
-    if (user && (await bcrypt.compare(password, user.password))) {
-      req.session.regenerate((err) => {
-        if (err) {
-          return res.status(500).send('Error regenerating session');
-        }
-        req.session.userId = user.id;
-        res.status(200).send('Logged in successfully');
-      });
-    } else {
-      res.status(401).send('Invalid username or password');
-    }
-  } catch (error) {
-    console.error('Error logging in:', error);
-    res.status(500).send('Error logging in');
+  if (user && (await bcrypt.compare(login.password, user.password))) {
+    await Session.initialize(req, user.id);
+    res.status(200).json({ message: 'Logged in successfully' });
+  } else {
+    throw new UnauthorizedError('Invalid username or password');
   }
-};
+});
 
-export const register = async (req: Request, res: Response) => {
+export const register = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
+  const registration: Registration = { username, email, password };
 
+  await isValidRegistration(database, registration);
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const userRecord = await database.createUser(username, email, hashedPassword);
+  const user = toUser(userRecord);
+  await Session.initialize(req, user.id);
+  res.status(201).json({ message: 'Registered successfully' });
+});
+
+export const logout = asyncHandler(async (req, res) => {
+  await Session.destroy(req, res);
+  res.status(200).json({ message: 'Logged out successfully' });
+});
+
+export const loginStatus = asyncHandler(async (req, res) => {
+  if (!req.session || !req.session.userId) {
+    return res.status(200).json({ loggedIn: false });
+  }
   try {
-    const userExists = await database.userExists(username, email);
-    if (userExists) {
-      return res.status(409).send('User already exists.');
+    const userRecord = await database.getUserById(req.session.userId);
+    if (!userRecord) {
+      return res.status(200).json({ loggedIn: false });
     }
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const dbNewUser = await database.createUser(
-      username,
-      email,
-      hashedPassword,
-    );
-    const newUser = toUser(dbNewUser);
-
-    req.session.regenerate((err) => {
-      if (err) {
-        return res.status(500).send('Error regenerating session');
-      }
-      req.session.userId = newUser.id;
-      res.status(201).send('User registered successfully.');
+    const user = toUser(userRecord);
+    return res.status(200).json({
+      isLoggedIn: true,
+      username: user.username,
     });
   } catch (error) {
-    console.error('Error registering new user:', error);
-    res.status(500).send('Error registering new user.');
+    return res.status(200).json({ loggedIn: false });
   }
-};
-
-export const logout = (req: Request, res: Response) => {
-  req.session.destroy((err) => {
-    if (err) {
-      console.error('Error during session destruction:', err);
-      return res.status(500).send('Error logging out');
-    }
-    res.clearCookie('connect.sid');
-    res.redirect('/');
-  });
-};
-
-export const checkLoginStatus = async (req: Request, res: Response) => {
-  const userId = req.session.userId;
-  const isLoggedIn = userId !== undefined;
-  let username = null;
-
-  if (isLoggedIn) {
-    console.log('user is logged in userId:', userId);
-
-    const userRecord = await database.getUserById(userId);
-    username = userRecord ? userRecord.username : null;
-  }
-
-  res.json({ isLoggedIn, username });
-};
+});
