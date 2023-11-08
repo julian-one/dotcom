@@ -9,7 +9,7 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    env: 
+    env:
       GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
     steps:
       - name: Checkout

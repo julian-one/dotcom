@@ -9,7 +9,7 @@
     "dev": "export ENV=dev && nodemon",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint --fix '**/*.{js,ts}'",
-    "format": "prettier --write '**/*.{js,ts,json,md}'"
+    "format": "prettier --write ."
   },
   "author": "",
   "license": "ISC",
