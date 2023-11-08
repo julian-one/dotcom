@@ -5,14 +5,13 @@ import {
 } from '../error/types';
 import connectPgSimple from 'connect-pg-simple';
 import session from 'express-session';
-import { Pool } from 'pg';
 import env from '../env';
+import Database from '../database';
 
 const PgSession = connectPgSimple(session);
 
 class Session {
-
-  static configure(db: { getPool: () => Pool }) {
+  static configure(db: Database) {
     return session({
       store: new PgSession({
         pool: db.getPool(),
@@ -22,7 +21,7 @@ class Session {
       resave: false,
       saveUninitialized: false,
       cookie: {
-        secure: true,
+        secure: process.env.ENV === 'dev' ? false: true,
         httpOnly: true,
         sameSite: 'strict',
         maxAge: 60 * 60 * 1000,
@@ -44,7 +43,7 @@ class Session {
       });
     });
   }
-  
+
   static destroy(req: Request, res: Response): Promise<void> {
     return new Promise((resolve, reject) => {
       req.session.destroy((err) => {
@@ -52,7 +51,9 @@ class Session {
           console.error('Session destruction failed:', err);
           reject(new SessionDestructionError('Error destroying session'));
         } else {
-          console.log(`Session destroyed for user ${req.session.userId}`);
+          console.log(
+            `Session destroyed for session ${JSON.stringify(req.session)}`,
+          );
           resolve();
         }
       });

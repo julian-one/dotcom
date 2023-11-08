@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>julian one</title>
     <link rel="stylesheet" href="./css/styles.css">
 </head>
+
 <body>
     <h1 id="greeting">hello 🌍</h1>
     <form>
@@ -15,9 +17,9 @@
     </form>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             fetch('/login-status')
-                .then(response => response.json())
+                .then(response => { return response.json() })
                 .then(data => {
                     const greetingElement = document.getElementById('greeting');
                     if (data.isLoggedIn) {
@@ -53,4 +55,5 @@
 
     </script>
 </body>
+
 </html>

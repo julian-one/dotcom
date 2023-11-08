@@ -42,15 +42,33 @@ export const logout = asyncHandler(async (req, res) => {
 });
 
 export const loginStatus = asyncHandler(async (req, res) => {
+  console.log(`------------ loginStatus START ------------`);
+  console.log(
+    `------------ loginStatus req.session ${JSON.stringify(
+      req.session,
+    )} ------------`,
+  );
+
   if (!req.session || !req.session.userId) {
+    console.log(`------------ loginStatus invalid ------------`);
+    console.log(
+      `------------ loginStatus req.session.userId: ${req.session.userId} ------------`,
+    );
     return res.status(200).json({ loggedIn: false });
   }
   try {
     const userRecord = await database.getUserById(req.session.userId);
+    console.log(
+      `------------ loginStatus userRecord: ${userRecord} ------------`,
+    );
+
     if (!userRecord) {
       return res.status(200).json({ loggedIn: false });
     }
+
     const user = toUser(userRecord);
+    console.log(`------------ loginStatus user: ${user} ------------`);
+
     return res.status(200).json({
       isLoggedIn: true,
       username: user.username,

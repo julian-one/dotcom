@@ -48,24 +48,31 @@ router.use((req: Request, res: Response, next: NextFunction): void => {
   next(new NotFoundError('Not Found', 404));
 });
 
-router.use((err: Error, _req: Request, res: Response, _next: NextFunction): void => {
-  let statusCode = 500;
-  let message = 'Internal Server Error';
+router.use(
+  (err: Error, _req: Request, res: Response, _next: NextFunction): void => {
+    let statusCode = 500;
+    let message = 'Internal Server Error';
 
-  if (
-    err instanceof UnauthorizedError ||
-    err instanceof NotFoundError ||
-    err instanceof ValidationError ||
-    err instanceof SessionInitializationError ||
-    err instanceof SessionDestructionError
-  ) {
-    statusCode = err.statusCode;
-    message = err.message;
-  }
+    if (
+      err instanceof UnauthorizedError ||
+      err instanceof NotFoundError ||
+      err instanceof ValidationError ||
+      err instanceof SessionInitializationError ||
+      err instanceof SessionDestructionError
+    ) {
+      statusCode = err.statusCode;
+      message = err.message;
+    }
 
-  console.log('Error status code:', statusCode);
-  res.status(statusCode).redirect(`/error.html?status=${statusCode}&message=${encodeURIComponent(message)}`);
-});
-
+    console.log('Error status code:', statusCode);
+    res
+      .status(statusCode)
+      .redirect(
+        `/error.html?status=${statusCode}&message=${encodeURIComponent(
+          message,
+        )}`,
+      );
+  },
+);
 
 export default router;
