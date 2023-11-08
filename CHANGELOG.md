@@ -1,3 +1,10 @@
+## [1.0.4](https://github.com/julian-one/dotcom/compare/v1.0.3...v1.0.4) (2023-11-08)
+
+
+### Bug Fixes
+
+* authorizer checks ([#5](https://github.com/julian-one/dotcom/issues/5)) ([06b1135](https://github.com/julian-one/dotcom/commit/06b11355722e3bfe7879b50dc317cea5218a79f8))
+
 ## [1.0.3](https://github.com/julian-one/dotcom/compare/v1.0.2...v1.0.3) (2023-11-08)
 
 ### Bug Fixes
