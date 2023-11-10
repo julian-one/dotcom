@@ -7,4 +7,5 @@ scratch*.*
 .env.*
 .secrets.*
 
-k8s
+k8s/cert*
+k8s/clusterissuer*
