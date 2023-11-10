@@ -1,3 +1,10 @@
+## [1.0.5](https://github.com/julian-one/dotcom/compare/v1.0.4...v1.0.5) (2023-11-10)
+
+
+### Bug Fixes
+
+* deployment ([#6](https://github.com/julian-one/dotcom/issues/6)) ([4242f7e](https://github.com/julian-one/dotcom/commit/4242f7e904309fc3118aa1b5bb8da507b5d3520e))
+
 ## [1.0.4](https://github.com/julian-one/dotcom/compare/v1.0.3...v1.0.4) (2023-11-08)
 
 
