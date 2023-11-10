@@ -42,16 +42,12 @@ export const logout = asyncHandler(async (req, res) => {
 });
 
 export const loginStatus = asyncHandler(async (req, res) => {
-  console.log(` -------- loginStatus 000 -------- `)
   if (!req.session || !req.session.userId) {
-    console.log(` -------- loginStatus 000 -------- `, req.session, JSON.stringify(req.session))
     return res.status(200).json({ loggedIn: false });
   }
-  console.log(` -------- loginStatus 001 -------- `, req.session, JSON.stringify(req.session))
 
   try {
     const userRecord = await database.getUserById(req.session.userId);
-    console.log(` -------- loginStatus 002 -------- `, userRecord, JSON.stringify(userRecord))
     if (!userRecord) {
       return res.status(200).json({ loggedIn: false });
     }
@@ -61,7 +57,6 @@ export const loginStatus = asyncHandler(async (req, res) => {
       username: user.username,
     });
   } catch (error) {
-    console.log(` -------- loginStatus 003 -------- YIKES`)
     return res.status(200).json({ loggedIn: false });
   }
 });
