@@ -1,3 +1,10 @@
+## [1.0.8](https://github.com/julian-one/dotcom/compare/v1.0.7...v1.0.8) (2023-11-10)
+
+
+### Bug Fixes
+
+* **debug:** login status ([#9](https://github.com/julian-one/dotcom/issues/9)) ([61a761c](https://github.com/julian-one/dotcom/commit/61a761cc02ee596b33f8c41bafd794e31fbf5d94))
+
 ## [1.0.7](https://github.com/julian-one/dotcom/compare/v1.0.6...v1.0.7) (2023-11-10)
 
 
