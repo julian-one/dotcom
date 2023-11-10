@@ -4,33 +4,33 @@ metadata:
   name: dotcom-ingress
   namespace: dotcom
   annotations:
-    spec.ingressClassName: "traefik"
-    cert-manager.io/cluster-issuer: "letsencrypt-route53"
+    spec.ingressClassName: 'traefik'
+    cert-manager.io/cluster-issuer: 'letsencrypt-route53'
     traefik.ingress.kubernetes.io/router.middlewares: dotcom-redirect-to-https@kubernetescrd
 spec:
-  tls:  
-  - hosts:
-    - julian-one.com
-    - www.julian-one.com
-    secretName: julian-one-com-tls  
+  tls:
+    - hosts:
+        - julian-one.com
+        - www.julian-one.com
+      secretName: julian-one-com-tls
   rules:
-  - host: julian-one.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: dotcom-service
-            port:
-              number: 8080
-  - host: www.julian-one.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: dotcom-service
-            port:
-              number: 8080
+    - host: julian-one.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: dotcom-service
+                port:
+                  number: 8080
+    - host: www.julian-one.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: dotcom-service
+                port:
+                  number: 8080
