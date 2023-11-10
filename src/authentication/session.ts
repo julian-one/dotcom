@@ -12,6 +12,11 @@ const PgSession = connectPgSimple(session);
 
 class Session {
   static configure(db: Database) {
+    console.log(
+      ' -------------- Session.config -------------',
+      env.SESSION_SECRET,
+      env.IS_COOKIE_SECURE
+    )
     return session({
       store: new PgSession({
         pool: db.getPool(),
@@ -23,13 +28,17 @@ class Session {
       cookie: {
         secure: env.IS_COOKIE_SECURE,
         httpOnly: true,
-        sameSite: 'strict',
+        sameSite: 'lax',
         maxAge: 60 * 60 * 1000,
       },
     });
   }
 
   static initialize(req: Request, userId: number): Promise<void> {
+    console.log(
+      ' -------------- Session.initialize -------------',
+    )
+
     return new Promise((resolve, reject) => {
       req.session.regenerate((err) => {
         if (err) {
