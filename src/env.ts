@@ -32,7 +32,7 @@ function getEnvBoolean(key: string): boolean {
 
 const env = {
   PORT: getEnvNumber('PORT'),
-  SECRET: getEnvString('SECRET'),
+  SESSION_SECRET: getEnvString('SESSION_SECRET'),
   IS_COOKIE_SECURE: getEnvBoolean('IS_COOKIE_SECURE'),
   ALLOWED_EMAILS: getEnvString('ALLOWED_EMAILS'),
   DB_USER: getEnvString('DB_USER'),

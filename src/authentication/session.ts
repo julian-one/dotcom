@@ -17,7 +17,7 @@ class Session {
         pool: db.getPool(),
         tableName: 'sessions',
       }),
-      secret: env.SECRET,
+      secret: env.SESSION_SECRET,
       resave: false,
       saveUninitialized: false,
       cookie: {
