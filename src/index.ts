@@ -7,6 +7,8 @@ import Session from './authentication/session';
 
 const app = express();
 const db = Database.getInstance();
+console.log('----------- index ----------- ', db);
+console.log('----------- index ----------- ', JSON.stringify(db));
 
 app.use(express.json());
 app.use(Session.configure(db));

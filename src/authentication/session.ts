@@ -13,13 +13,19 @@ const PgSession = connectPgSimple(session);
 class Session {
   static configure(db: Database) {
     console.log(
-      ' -------------- Session.config -------------',
+      ' -------------- Session.config 000 -------------',
       env.SESSION_SECRET,
       env.IS_COOKIE_SECURE
     )
+    const myPool = db.getPool();
+    console.log(
+      ' -------------- Session.config 001 -------------',
+      myPool,
+      JSON.stringify(myPool)
+    )
     return session({
       store: new PgSession({
-        pool: db.getPool(),
+        pool: myPool,
         tableName: 'sessions',
       }),
       secret: env.SESSION_SECRET,
