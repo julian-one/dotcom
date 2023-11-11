@@ -9,23 +9,32 @@ import { asyncHandler } from '../handler';
 
 const database: Database = Database.getInstance();
 
-export const login = asyncHandler(async (req, res) => {
+const login = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
   const login: Login = { username, password };
 
-  const userRecord = await database.getUserByUsername(login.username);
+  const userRecord = await database.getUserByUsername(
+    login.username.toLowerCase(),
+  );
   const user = toUser(userRecord);
 
-  if (user && (await bcrypt.compare(login.password, user.password))) {
+  if (
+    user.username.toLowerCase() === login.username.toLowerCase() &&
+    (await bcrypt.compare(login.password, user.password))
+  ) {
     await Session.initialize(req, user.id);
+    await database.updateUserLastLogin(user.id);
     res.status(200).json({ message: 'Logged in successfully' });
   } else {
     throw new UnauthorizedError('Invalid username or password');
   }
 });
 
-export const register = asyncHandler(async (req, res) => {
-  const { username, email, password } = req.body;
+const register = asyncHandler(async (req, res) => {
+  let { username, email, password } = req.body;
+  username = username.toLowerCase();
+  email = email.toLowerCase();
+
   const registration: Registration = { username, email, password };
 
   await isValidRegistration(database, registration);
@@ -36,12 +45,12 @@ export const register = asyncHandler(async (req, res) => {
   res.status(201).json({ message: 'Registered successfully' });
 });
 
-export const logout = asyncHandler(async (req, res) => {
+const logout = asyncHandler(async (req, res) => {
   await Session.destroy(req, res);
   res.status(200).json({ message: 'Logged out successfully' });
 });
 
-export const loginStatus = asyncHandler(async (req, res) => {
+const loginStatus = asyncHandler(async (req, res) => {
   if (!req.session || !req.session.userId) {
     return res.status(200).json({ loggedIn: false });
   }
@@ -60,3 +69,5 @@ export const loginStatus = asyncHandler(async (req, res) => {
     return res.status(200).json({ loggedIn: false });
   }
 });
+
+export { register, login, logout, loginStatus };

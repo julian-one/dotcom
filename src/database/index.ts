@@ -93,6 +93,12 @@ class Database {
     }
     return result.rows[0];
   }
+
+  public async updateUserLastLogin(id: number): Promise<void> {
+    await this.query('UPDATE users set last_login = now() where user_id = $1', [
+      id,
+    ]);
+  }
 }
 
 export default Database;
