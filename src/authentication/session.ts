@@ -52,7 +52,7 @@ class Session {
           reject(new SessionDestructionError('Error destroying session'));
         } else {
           console.log(
-            `Session destroyed for session ${JSON.stringify(req.session)}`,
+            `Session destroyed ...`,
           );
           resolve();
         }

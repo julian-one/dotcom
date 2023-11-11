@@ -37,23 +37,24 @@
     </form>
 
     <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        fetch('/login-status')
-          .then((response) => {
-            return response.json();
-          })
-          .then((data) => {
-            const greetingElement = document.getElementById('greeting');
-            if (data.isLoggedIn) {
-              greetingElement.textContent = `hello ${data.username}`;
-              document.getElementById('login-btn').style.display = 'none';
-              document.getElementById('logout-btn').style.display = 'block';
-            } else {
-              greetingElement.textContent = 'hello 🌍';
-              document.getElementById('login-btn').style.display = 'block';
-              document.getElementById('logout-btn').style.display = 'none';
-            }
-          });
+      document.addEventListener('DOMContentLoaded', async () => {
+        try {
+          const response = await fetch('/login-status');
+          const { isLoggedIn, username } = await response.json();
+          const greetingElement = document.getElementById('greeting');
+          const loginButton = document.getElementById('login-btn');
+          const logoutButton = document.getElementById('logout-btn');
+          const registerButton = document.getElementById('register-btn');
+
+          greetingElement.textContent = isLoggedIn
+            ? `hello ${username}`
+            : 'hello 🌍';
+          loginButton.style.display = isLoggedIn ? 'none' : 'block';
+          logoutButton.style.display = isLoggedIn ? 'block' : 'none';
+          registerButton.style.display = isLoggedIn ? 'none' : 'block';
+        } catch (error) {
+          console.error('An error occurred:', error);
+        }
       });
 
       function login() {
