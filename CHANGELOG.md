@@ -1,3 +1,9 @@
+## [1.0.10](https://github.com/julian-one/dotcom/compare/v1.0.9...v1.0.10) (2023-11-11)
+
+### Bug Fixes
+
+- last login, lint-staged ([#11](https://github.com/julian-one/dotcom/issues/11)) ([3129592](https://github.com/julian-one/dotcom/commit/31295923f0b7c02880440155f242abbe6f7fe74d))
+
 ## [1.0.9](https://github.com/julian-one/dotcom/compare/v1.0.8...v1.0.9) (2023-11-10)
 
 ### Bug Fixes
