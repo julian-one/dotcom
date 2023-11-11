@@ -51,9 +51,7 @@ class Session {
           console.error('Session destruction failed:', err);
           reject(new SessionDestructionError('Error destroying session'));
         } else {
-          console.log(
-            `Session destroyed ...`,
-          );
+          console.log(`Session destroyed ...`);
           resolve();
         }
       });

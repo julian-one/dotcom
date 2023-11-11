@@ -13,13 +13,17 @@ const login = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
   const login: Login = { username, password };
 
-  const userRecord = await database.getUserByUsername(login.username.toLowerCase());
+  const userRecord = await database.getUserByUsername(
+    login.username.toLowerCase(),
+  );
   const user = toUser(userRecord);
 
-  if (user.username.toLowerCase() === login.username.toLowerCase() &&
-    await bcrypt.compare(login.password, user.password)) {
+  if (
+    user.username.toLowerCase() === login.username.toLowerCase() &&
+    (await bcrypt.compare(login.password, user.password))
+  ) {
     await Session.initialize(req, user.id);
-    await database.updateUserLastLogin(user.id)
+    await database.updateUserLastLogin(user.id);
     res.status(200).json({ message: 'Logged in successfully' });
   } else {
     throw new UnauthorizedError('Invalid username or password');
@@ -66,5 +70,4 @@ const loginStatus = asyncHandler(async (req, res) => {
   }
 });
 
-
-export { register, login, logout, loginStatus}
+export { register, login, logout, loginStatus };
