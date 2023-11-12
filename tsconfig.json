@@ -13,6 +13,6 @@
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "typeRoots": ["./src/types.d.ts", "./node_modules/@types"]
   },
-  "include": ["src/**/*", "public"],
+  "include": ["src/**/*", "tests/**/*", "public"],
   "exclude": ["node_modules", "dist"]
 }
