@@ -50,9 +50,12 @@ const isValidRegistration = async (
   if (await database.checkUserExistsByEmail(email)) {
     throw new ValidationError('Email is already in use.', 409);
   }
-  // if (!isPasswordStrong(password)) {
-  //   throw new ValidationHttpError('Password does not meet the required standards.', 400);
-  // }
+  if (!isPasswordStrong(password)) {
+    throw new ValidationError(
+      'Password does not meet the required standards.',
+      400,
+    );
+  }
 };
 
 export { isValidRegistration };
